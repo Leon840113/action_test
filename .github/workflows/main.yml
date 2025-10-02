@@ -1,30 +1,18 @@
-            - name: Slack: Send to Slack
-  # You may pin to the exact commit or the version.
-  # uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
-  uses: slackapi/slack-github-action@v2.1.1
-  with:
-    # A custom API URL to send Slack API method requests to.
-    api: # optional
-    # If the step exits with an error on errors or continues.
-    errors: # optional, default is false
-    # The Slack API method to call.
-    method: # optional
-    # Attributes that create the content of the request using JSON or YAML.
-    payload: # optional
-    # Field seperator for nested attributes in the input payload.
-    payload-delimiter: # optional
-    # Path to a file containing a valid input payload made of JSON or YAML.
-    payload-file-path: # optional
-    # If templated variables in input payloads should be replaced.
-    payload-templated: # optional, default is false
-    # An optional proxied route for HTTPS connections.
-    proxy: # optional
-    # The strategy to use when performing retried requests.
-    retries: # optional, default is 5
-    # The authentication value used with the Slack API.
-    token: # optional
-    # A location for posting request payloads.
-    webhook: # optional
-    # Option to use either an incoming webhook or webhook trigger.
-    webhook-type: # optional
-          
+name: slack-notification
+
+on: [push, pull_request, issues]
+
+jobs:
+  slack-notifications:
+    runs-on: ubuntu-20.04
+    name: Sends a message to Slack when a push, a pull request or an issue is made
+    steps:
+      - name: Send message to Slack API
+        uses: archive/github-actions-slack@v2.0.0
+        id: notify
+        with:
+          slack-bot-user-oauth-access-token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          slack-channel: CPPUV5KU0
+          slack-text: Hello! Event "${{ github.event_name }}" in "${{ github.repository }}" 🤓
+      - name: Result from "Send Message"
+        run: echo "The result was ${{ steps.notify.outputs.slack-result }}"
